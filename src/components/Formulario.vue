@@ -3,13 +3,27 @@
     <div class="box formulario">
         <div class="columns">
 
-            <div class="column is-8" role="form" aria-label="Formulário para criação">
-                <input 
-                type="text" 
-                class="input" 
+            <div class="column is-5" role="form" aria-label="Formulário para criação">
+                <input
+                type="text"
+                class="input"
                 placeholder="Qual tarefa voce deseja iniciar?"
                 v-model="descricao"
                 >
+            </div>
+            <div class="column is-3">
+                <div class="select">
+                    <select v-model="idProjeto">
+                        <option value=""> Selecione o projeto </option>
+                        <option
+                            :value="projeto.id"
+                            v-for="projeto in projetos"
+                            :key="projeto.id"
+                        >
+                        {{ projeto.nome }}
+                        </option>
+                    </select>
+                </div>
             </div>
 
             <div class="column">
@@ -21,8 +35,11 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from "vue";
+    import { key } from "@/store";
+    import { computed, defineComponent } from "vue";
+    import { useStore } from "vuex";
     import Temporizador from "./Temporizador.vue";
+
     export default defineComponent({
     // eslint-disable-next-line vue/multi-word-component-names
     name: "Formulário",
@@ -30,7 +47,8 @@
     components: { Temporizador },
     data(){
         return{
-            descricao: ''
+            descricao: '',
+            idProjeto: ''
         }
     }
     ,
@@ -38,9 +56,17 @@
         finalizarTarefa(tempoDecorrido : number) : void{
            this.$emit('aoSalvarTarefa',{
             duracaoEmSegundos: tempoDecorrido,
-            descricao: this.descricao
+            descricao: this.descricao,
+            projeto: this.projetos.find(proj => proj.id == this.idProjeto)
             });
             this.descricao = '';
+            this.idProjeto = '';
+        }
+    },
+    setup() {
+        const store = useStore(key)
+        return {
+            projetos: computed(() => store.state.projetos)
         }
     }
     })
