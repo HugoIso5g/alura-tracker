@@ -1,6 +1,6 @@
 <template>
     <Box>
-        <div class="columns">
+        <div class="columns clicavel" @click="tarefaClicada">
             <div class="column is-7">
                 {{tarefa.descricao || 'Tarefa sem descrição'}}
             </div>
@@ -20,7 +20,11 @@
     import Cronometro from "./Cronometro.vue";
     import ITarefa from "@/interfaces/ITarefa";
     import Box from "./Box.vue";
+
     export default defineComponent({
+    // eslint-disable-next-line vue/multi-word-component-names
+    name: 'Tarefa',
+    emits: ['aoTarefaClicada'],
     components: { Cronometro,Box },
     props: {
         tarefa : {
@@ -28,8 +32,22 @@
             required: true
         }
     },
-        // eslint-disable-next-line vue/multi-word-component-names
-        name: 'Tarefa'
+    methods:{
+        tarefaClicada() : void {
+            this.$emit('aoTarefaClicada',this.tarefa);
+        }
+    },
+    computed:{
+        tempoGasto() : string {
+            return new Date(this.tarefa.duracaoEmSegundos *1000)
+            .toISOString()
+            .substr(11,8);
+        }
+    }
     });
 </script>
-
+<style scoped>
+    .clicavel{
+        cursor:pointer;
+    }
+</style>

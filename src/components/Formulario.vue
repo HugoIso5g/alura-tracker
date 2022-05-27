@@ -36,7 +36,7 @@
 
 <script lang="ts">
     import { key } from "@/store";
-    import { computed, defineComponent } from "vue";
+    import { computed, defineComponent,ref } from "vue";
     import { useStore } from "vuex";
     import Temporizador from "./Temporizador.vue";
 
@@ -45,28 +45,32 @@
     name: "Formulário",
     emits: ['aoSalvarTarefa'],
     components: { Temporizador },
-    data(){
-        return{
-            descricao: '',
-            idProjeto: ''
+    setup(props,{emit}) {
+        const store = useStore(key);
+
+        const projetos = computed(() => store.state.projeto.projetos);
+
+        const descricao = ref("");
+        const idProjeto = ref("");
+
+        const  finalizarTarefa = (tempoDecorrido : number) : void => {
+
+           emit('aoSalvarTarefa',{
+                duracaoEmSegundos: tempoDecorrido,
+                descricao: descricao.value,
+                projeto: projetos.value.find(proj => proj.id == idProjeto.value)
+                }
+            );
+
+            descricao.value = '';
+            idProjeto.value = '';
         }
-    }
-    ,
-    methods: {
-        finalizarTarefa(tempoDecorrido : number) : void{
-           this.$emit('aoSalvarTarefa',{
-            duracaoEmSegundos: tempoDecorrido,
-            descricao: this.descricao,
-            projeto: this.projetos.find(proj => proj.id == this.idProjeto)
-            });
-            this.descricao = '';
-            this.idProjeto = '';
-        }
-    },
-    setup() {
-        const store = useStore(key)
+
         return {
-            projetos: computed(() => store.state.projetos)
+            descricao,
+            idProjeto,
+            projetos,
+            finalizarTarefa
         }
     }
     })

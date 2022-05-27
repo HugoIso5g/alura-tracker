@@ -1,5 +1,5 @@
 <template>
-    <div class="box has-text-weight-bold" :styles="estilos">
+    <div class="box has-text-weight-bold estilos" >
         <slot></slot>
     </div>
 </template>
@@ -9,13 +9,12 @@
     export default defineComponent({
         // eslint-disable-next-line vue/multi-word-component-names
         name: 'Box',
-        data() {
-            return{
-                estilos:{
-                     backgroundColor: '#FAF0CA',
-                }
-            }
-        }
     });
 
 </script>
+
+<style scoped>
+    .estilos {
+        background-color: #FAF0CA;
+    }
+</style>
